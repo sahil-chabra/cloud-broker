@@ -1,22 +1,16 @@
 import {
-  DISPLAY_ALERT,
-  CLEAR_ALERT,
   SETUP_USER_BEGIN,
-  SETUP_USER_ERROR,
   SETUP_USER_SUCCESS,
+  SETUP_USER_ERROR,
+  HIDE_ALERT,
 } from "./actions";
 
 export const reducer = (state, action) => {
-  if (action.type === DISPLAY_ALERT) {
+  if (action.type === SETUP_USER_BEGIN) {
     return {
       ...state,
-      showAlert: true,
-      alertType: action.payload.alertType,
-      alertText: action.payload.alertText,
+      isLoading: true,
     };
-  }
-  if (action.type === SETUP_USER_BEGIN) {
-    return { ...state, isLoading: true };
   } else if (action.type === SETUP_USER_SUCCESS) {
     return {
       ...state,
@@ -34,7 +28,13 @@ export const reducer = (state, action) => {
       alertType: "danger",
       alertText: action.message,
     };
+  } else if (action.type === HIDE_ALERT) {
+    return {
+      ...state,
+      showAlert: false,
+    };
   }
+  return {
+    ...state,
+  };
 };
-
-export default reducer;

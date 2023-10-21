@@ -1,79 +1,92 @@
-import React, { useReducer, useContext } from "react";
-
+import { createContext, useContext, useReducer } from "react";
+import { reducer } from "./reducer.js";
+import axios from "axios";
 import {
+  HIDE_ALERT,
   SETUP_USER_BEGIN,
-  SETUP_USER_SUCCESS,
   SETUP_USER_ERROR,
-  DISPLAY_ALERT,
-  CLEAR_ALERT,
-} from "./actions";
-import reducer from "./reducer";
+  SETUP_USER_SUCCESS,
+} from "./actions.js";
+
+const appContext = createContext();
 
 const initialState = {
+  user: null,
   isLoading: false,
   showAlert: false,
   alertType: "",
   alertText: "",
-  user: "",
 };
-const appContext = React.createContext();
 
-const AppProvider = ({ children }) => {
+export const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const displayAlert = (alertType, alertText) => {
-    dispatch({ type: DISPLAY_ALERT, alertType, alertText });
+  const displayAlert = ({ alertType, alertText }) => {
+    dispatch({
+      alertType,
+      alertText,
+    });
+    hideAlert();
   };
 
-  const clearAlert = () => {
+  const hideAlert = () => {
     setTimeout(() => {
-      dispatch({
-        type: CLEAR_ALERT,
-      });
+      dispatch({ type: HIDE_ALERT });
     }, 3000);
   };
 
-  const loginUser = (user) => {
-    console.log("User Logged in!");
-    console.log(user);
+  const setUpUser = async ({ currentUser, endpoint, alertText }) => {
     dispatch({
-      type: SETUP_USER_SUCCESS,
-      payload: {
-        user,
-        alertText: "Log In Successfully",
-      },
+      type: SETUP_USER_BEGIN,
     });
 
-    clearAlert();
+    try {
+      console.log(currentUser);
+      const response = await axios.post(
+        `http://localhost:5000/api/v1/auth/${endpoint}`,
+        currentUser
+      );
+
+      console.log(response);
+      const { user } = await response.data.data;
+      // console.log(user);
+      dispatch({
+        type: SETUP_USER_SUCCESS,
+        payload: {
+          user,
+          alertText,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      dispatch({
+        type: SETUP_USER_ERROR,
+        message: error.reponse.data.message,
+      });
+    }
+
+    hideAlert();
   };
-  const registerUser = (user) => {
-    console.log("User Registered!");
-    console.log(user);
-    dispatch({
-      type: SETUP_USER_SUCCESS,
-      payload: {
-        user,
-        alertText: "Log In Successfully",
-      },
+
+  const registerUser = (currentUser) => {
+    setUpUser({
+      currentUser,
+      endpoint: "register",
+      alertText: "Registeration Complete! redirecting...",
     });
-
-    clearAlert();
   };
 
-  const submitUserRequirements = (userReq) => {
-    console.log("User requirements gathered!");
-    console.log(userReq);
+  const logInUser = (currentUser) => {
+    setUpUser({
+      currentUser,
+      endpoint: "login",
+      alertText: "Logged in successfully! redirecting...",
+    });
   };
 
   return (
     <appContext.Provider
-      value={{
-        ...state,
-        registerUser,
-        loginUser,
-        displayAlert,
-        submitUserRequirements,
-      }}
+      value={{ ...state, logInUser, registerUser, displayAlert }}
     >
       {children}
     </appContext.Provider>
@@ -83,5 +96,3 @@ const AppProvider = ({ children }) => {
 export const useAppContext = () => {
   return useContext(appContext);
 };
-
-export { AppProvider };
