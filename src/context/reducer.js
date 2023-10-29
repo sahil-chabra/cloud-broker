@@ -3,6 +3,7 @@ import {
   SETUP_USER_SUCCESS,
   SETUP_USER_ERROR,
   HIDE_ALERT,
+  SET_USER_REQUIREMENT,
 } from "./actions";
 
 export const reducer = (state, action) => {
@@ -10,6 +11,11 @@ export const reducer = (state, action) => {
     return {
       ...state,
       isLoading: true,
+    };
+  } else if (action.type === SET_USER_REQUIREMENT) {
+    return {
+      ...state,
+      userReq: action.payload.userReq,
     };
   } else if (action.type === SETUP_USER_SUCCESS) {
     return {

@@ -1,10 +1,11 @@
 import React from "react";
+
 import { useForm } from "react-hook-form";
-
-const UserForm = () => {
-  const max_step = 4;
-
+import { useAppContext } from "../../context/appContext";
+const max_step = 4;
+const UserForm = (params) => {
   const [formStep, setFormStep] = React.useState(0);
+  const { setUserReq } = useAppContext();
 
   const {
     watch,
@@ -13,6 +14,8 @@ const UserForm = () => {
     formState: { errors, isValid },
   } = useForm({ mode: "all" });
   const completeFormStep = () => {
+    // e.preventDefault();
+    console.log("called " + formStep);
     setFormStep((prev) => {
       return prev + 1;
     });
@@ -21,7 +24,7 @@ const UserForm = () => {
   const renderButton = () => {
     if (formStep > 3) {
       return undefined;
-    } else if (formStep === 3) {
+    } else if (formStep === 4) {
       return (
         <button
           disabled={!isValid}
@@ -31,12 +34,12 @@ const UserForm = () => {
           Create Account
         </button>
       );
-    } else {
+    } else if (formStep !== 3) {
       return (
         <button
+          type="button"
           onClick={completeFormStep}
           disabled={!isValid}
-          type="button"
           className="mt-6 bg-green-600 text-white rounded px-8 py-6 w-full disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           Next Step
@@ -46,8 +49,11 @@ const UserForm = () => {
   };
 
   const formSubmit = (val) => {
-    window.alert(JSON.stringify(val, null, 2));
-    console.log(watch());
+    console.log("Yes");
+    console.log(val);
+    setUserReq(val);
+    params.setShowPricing(true);
+
     completeFormStep();
   };
 
@@ -76,9 +82,9 @@ const UserForm = () => {
       <div className="max-w-xl w-full mt-24 mb-24 rounded-lg shadow-2xl bg-white mx-auto overflow-hidden z-10">
         <div className="px-16 py-10">
           <form onSubmit={handleSubmit(formSubmit)}>
-            {formStep + 1 < max_step && (
+            {formStep < max_step && (
               <div className="flex mb-2">
-                {formStep >= 1 && (
+                {formStep > 0 && (
                   <button
                     className="hover:text-green-600"
                     onClick={prevStep}
@@ -88,13 +94,13 @@ const UserForm = () => {
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
-                      stroke-width="1.5"
+                      strokeWidth="1.5"
                       stroke="currentColor"
-                      class="w-6 h-6"
+                      className="w-6 h-6"
                     >
                       <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                         d="M15.75 19.5L8.25 12l7.5-7.5"
                       />
                     </svg>
@@ -105,8 +111,8 @@ const UserForm = () => {
                 </p>
               </div>
             )}
-            {formStep === 0 && (
-              <section>
+            {formStep >= 0 && (
+              <section className={`${formStep === 0 ? "block" : "hidden"}`}>
                 <h2 className="font-semibold text-3xl mb-8">
                   Service Requirments
                 </h2>
@@ -118,12 +124,13 @@ const UserForm = () => {
                   {...register("csp", {
                     required: {
                       value: true,
-                      message: "please enter your name",
+                      message: "please enter the name of provider",
                     },
                   })}
                 >
                   <option value="AWS">AWS</option>
                   <option value="Azure">Azure</option>
+                  <option value="IBM">IBM</option>
                   <option value="Google Cloud">Google-Cloud</option>
                   <option value="other">Other</option>
                 </select>
@@ -136,7 +143,7 @@ const UserForm = () => {
                   {...register("tos", {
                     required: {
                       value: true,
-                      message: "please enter your name",
+                      message: "please enter the type of service",
                     },
                   })}
                 >
@@ -156,11 +163,11 @@ const UserForm = () => {
                   {...register("cpu", {
                     required: {
                       value: true,
-                      message: "please enter no. of cors",
+                      message: "please enter number of cors",
                     },
                     min: {
                       value: 0,
-                      message: "no. of cors cannot be negative",
+                      message: "number of cors cannot be negative",
                     },
                   })}
                 />
@@ -220,8 +227,8 @@ const UserForm = () => {
               </section>
             )}
 
-            {formStep === 1 && (
-              <section>
+            {formStep >= 1 && (
+              <section className={`${formStep === 1 ? "block" : "hidden"}`}>
                 <h2 className="font-semibold text-3xl mb-8">
                   Budget And Cost Prefference
                 </h2>
@@ -269,8 +276,8 @@ const UserForm = () => {
               </section>
             )}
 
-            {formStep === 2 && (
-              <section>
+            {formStep >= 2 && (
+              <section className={`${formStep === 2 ? "block" : "hidden"}`}>
                 <h2 className="font-semibold text-3xl mb-8">
                   Technical Specifications
                 </h2>
@@ -324,30 +331,22 @@ const UserForm = () => {
               </section>
             )}
 
-            {formStep === 3 && (
-              <section>
+            {formStep >= 3 && (
+              <section className={`${formStep === 3 ? "block" : "hidden"}`}>
                 <h2 className="font-semibold text-3xl mb-8">
                   Security And Compliance Need
                 </h2>
-                <label htmlFor="security-req">Data Security Requirments</label>
-                <input
-                  type="text"
-                  id="security-req"
-                  name="security-req"
-                  className=" mt-3 mb-4 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-                  {...register("security-req")}
-                />
-                Encrption Prefference
                 <div className="flex items-center mt-3 mb-4 ml-3">
                   <input
-                    id="default-checkbox"
+                    id="data-checkbox"
                     type="checkbox"
-                    name="first"
-                    value="first"
+                    name="data_encrypt"
+                    value="yes"
                     className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    {...register("data_encrypt")}
                   />
                   <label
-                    for="default-checkbox"
+                    htmlFor="data-checkbox"
                     className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-500"
                   >
                     Data Encrption
@@ -355,24 +354,32 @@ const UserForm = () => {
                 </div>
                 <div className="flex items-center ml-3">
                   <input
-                    id="default-checkbox"
+                    id="transport-checkbox"
                     type="checkbox"
-                    name="second"
-                    value="secnd"
+                    name="transport_encrypt"
+                    value="yes"
                     className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    {...register("transport_encrypt")}
                   />
                   <label
-                    for="default-checkbox"
+                    htmlFor="transport-checkbox"
                     className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-500"
                   >
                     Transport Encrption
                   </label>
                 </div>
+                <button
+                  disabled={!isValid}
+                  type="submit"
+                  className="mt-6 bg-green-600 text-white rounded px-8 py-6 w-full disabled:bg-gray-400 disabled:cursor-not-allowed"
+                >
+                  Create Account
+                </button>
               </section>
             )}
 
-            {formStep === 4 && (
-              <section>
+            {formStep >= 4 && (
+              <section className={`${formStep === 4 ? "block" : "hidden"}`}>
                 <h2 className="font-semibold text-3xl mb-6 ml-12">
                   Information Saved
                 </h2>

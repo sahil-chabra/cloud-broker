@@ -6,6 +6,7 @@ import {
   SETUP_USER_BEGIN,
   SETUP_USER_ERROR,
   SETUP_USER_SUCCESS,
+  SET_USER_REQUIREMENT,
 } from "./actions.js";
 
 const appContext = createContext();
@@ -16,9 +17,20 @@ const initialState = {
   showAlert: false,
   alertType: "",
   alertText: "",
+  userReq: null,
 };
 
 export const AppProvider = ({ children }) => {
+  const user = localStorage.getItem("userStr");
+  const userReq = localStorage.getItem("userReqStr");
+  if (user) {
+    const userObj = JSON.parse(user);
+    initialState.user = userObj;
+  }
+  if (userReq) {
+    const userReqObj = JSON.parse(userReq);
+    initialState.userReq = userReqObj;
+  }
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const displayAlert = ({ alertType, alertText }) => {
@@ -33,6 +45,17 @@ export const AppProvider = ({ children }) => {
     setTimeout(() => {
       dispatch({ type: HIDE_ALERT });
     }, 3000);
+  };
+  const setUserReq = (userReq) => {
+    console.log("User req");
+    console.log(userReq);
+    dispatch({
+      type: SET_USER_REQUIREMENT,
+      payload: {
+        userReq,
+      },
+    });
+    localStorage.setItem("userReqStr", JSON.stringify(userReq));
   };
 
   const setUpUser = async ({ currentUser, endpoint, alertText }) => {
@@ -57,6 +80,7 @@ export const AppProvider = ({ children }) => {
           alertText,
         },
       });
+      localStorage.setItem("userStr", JSON.stringify(user));
     } catch (error) {
       console.log(error);
       dispatch({
@@ -86,7 +110,7 @@ export const AppProvider = ({ children }) => {
 
   return (
     <appContext.Provider
-      value={{ ...state, logInUser, registerUser, displayAlert }}
+      value={{ ...state, logInUser, registerUser, displayAlert, setUserReq }}
     >
       {children}
     </appContext.Provider>
