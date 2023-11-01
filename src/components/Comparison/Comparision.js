@@ -76,9 +76,9 @@ const providers = [
   },
 ];
 export default function Comparision() {
-  const { userReq } = useAppContext();
-  const [data, setData] = useState(userReq);
-  console.log(data);
+  // const { userReq } = useAppContext();
+  // const [data, setData] = useState(userReq);
+  // console.log(data);
 
   return (
     <div
@@ -87,6 +87,7 @@ export default function Comparision() {
         background: "#101522",
         paddingTop: "8rem",
         paddingBottom: "2rem",
+        width: "100vw",
       }}
     >
       <MDBContainer className="py-5 text-center shadow-4-strong bg-light rounded-6">
@@ -111,82 +112,37 @@ export default function Comparision() {
             <tr>
               <th scope="row">TOS</th>
               {providers.map((prv, index) => {
-                console.log(prv.tos + " " + data.tos);
-                const checked = prv.tos === data.tos;
-                return (
-                  <td>
-                    <MDBIcon
-                      key={index}
-                      fas
-                      icon={`${checked ? "check" : "times"}`}
-                      className={`text-${checked ? "success" : "danger"}`}
-                    />
-                  </td>
-                );
+                // console.log(prv.tos + " " + data.tos);
+                // const checked = prv.tos === data.tos;
+                return <td>{prv.tos}</td>;
               })}
             </tr>
             <tr>
               <th scope="row">CPU</th>
               {providers.map((prv, index) => {
-                const checked = prv.cpu >= +data.cpu;
-                return (
-                  <td>
-                    <MDBIcon
-                      key={index}
-                      fas
-                      icon={`${checked ? "check" : "times"}`}
-                      className={`text-${checked ? "success" : "danger"}`}
-                    />
-                  </td>
-                );
+                // const checked = prv.cpu >= +data.cpu;
+                return <td>{prv.cpu}</td>;
               })}
             </tr>
             <tr>
               <th scope="row">RAM</th>
               {providers.map((prv, index) => {
-                const checked = prv.ram >= +data.ram;
-                return (
-                  <td>
-                    <MDBIcon
-                      key={index}
-                      fas
-                      icon={`${checked ? "check" : "times"}`}
-                      className={`text-${checked ? "success" : "danger"}`}
-                    />
-                  </td>
-                );
+                // const checked = prv.ram >= +data.ram;
+                return <td>{prv.ram}</td>;
               })}
             </tr>
             <tr>
               <th scope="row">Storage</th>
               {providers.map((prv, index) => {
-                const checked = prv.storage >= +data.storage;
-                return (
-                  <td>
-                    <MDBIcon
-                      key={index}
-                      fas
-                      icon={`${checked ? "check" : "times"}`}
-                      className={`text-${checked ? "success" : "danger"}`}
-                    />
-                  </td>
-                );
+                // const checked = prv.storage >= +data.storage;
+                return <td>{prv.storage}</td>;
               })}
             </tr>
             <tr>
               <th scope="row">Budget</th>
               {providers.map((prv, index) => {
-                const checked = prv.budget <= +data.budget;
-                return (
-                  <td>
-                    <MDBIcon
-                      key={index}
-                      fas
-                      icon={`${checked ? "check" : "times"}`}
-                      className={`text-${checked ? "success" : "danger"}`}
-                    />
-                  </td>
-                );
+                // const checked = prv.budget <= +data.budget;
+                return <td>{prv.budget}</td>;
               })}
             </tr>
             <tr>

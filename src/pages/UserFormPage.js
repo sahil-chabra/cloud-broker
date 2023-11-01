@@ -1,16 +1,11 @@
 import { useState } from "react";
 import UserForm from "../components/UserForm/UserForm";
-import { Redirect } from "react-router-dom/cjs/react-router-dom.min";
+import { useNavigate } from "react-router-dom";
 
 const UserFormPage = () => {
-  const [showPricing, setShowPricing] = useState(false);
+  const navigate = useNavigate();
 
-  return (
-    <>
-      {!showPricing && <UserForm setShowPricing={setShowPricing} />}
-      {showPricing && <Redirect to="/pricing" />}
-    </>
-  );
+  return <UserForm />;
 };
 
 export default UserFormPage;

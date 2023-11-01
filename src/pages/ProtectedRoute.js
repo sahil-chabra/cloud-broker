@@ -1,13 +1,16 @@
-import { Redirect } from "react-router-dom/cjs/react-router-dom.min";
+import { Navigate } from "react-router-dom";
 import { useAppContext } from "../context/appContext";
-// import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const ProtectedRoute = ({ children }) => {
   const { user } = useAppContext();
-
-  if (!user) {
-    return <Redirect to="/signup" />;
-  }
-  return children;
+  console.log(user);
+  // const navigate = useNavigate();
+  return (
+    <>
+      {!user && <Navigate to={"/landing"} />}
+      {user && children}
+    </>
+  );
 };
 export default ProtectedRoute;

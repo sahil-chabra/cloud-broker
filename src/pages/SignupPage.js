@@ -1,25 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Form from "../components/Form/Form";
-import { Redirect } from "react-router-dom/cjs/react-router-dom.min";
+import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/appContext";
 
-function SignUp() {
+function SignUp({ userType }) {
   const { user, showAlert } = useAppContext();
-  //   useEffect(() => {
-  //     if (user) {
-  //       console.log("found");
-  //       setTimeout(() => {
-  //         return <Redirect to="/form" />;
-  //       }, 3000);
-  //     }
-  //   }, [user]);
+  // console.log(userType);
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (user && !showAlert) {
+      navigate("/");
+    }
+  }, [user, showAlert, navigate]);
 
-  return (
-    <>
-      {user && !showAlert && <Redirect to="/form" />}
-      {(!user || showAlert) && <Form />}
-    </>
-  );
+  return <Form userType={userType} />;
 }
 
 export default SignUp;

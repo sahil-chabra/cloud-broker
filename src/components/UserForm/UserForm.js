@@ -1,11 +1,13 @@
 import React from "react";
-
-import { useForm } from "react-hook-form";
 import { useAppContext } from "../../context/appContext";
-const max_step = 4;
-const UserForm = (params) => {
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+//import { useAppContext } from "../../context/appContext";
+const max_step = 5;
+const UserForm = () => {
   const [formStep, setFormStep] = React.useState(0);
-  const { setUserReq } = useAppContext();
+  const { registerProvider } = useAppContext();
+  const navigate = useNavigate();
 
   const {
     watch,
@@ -22,9 +24,9 @@ const UserForm = (params) => {
   };
 
   const renderButton = () => {
-    if (formStep > 3) {
+    if (formStep > 4) {
       return undefined;
-    } else if (formStep === 4) {
+    } else if (formStep === 5) {
       return (
         <button
           disabled={!isValid}
@@ -34,7 +36,7 @@ const UserForm = (params) => {
           Create Account
         </button>
       );
-    } else if (formStep !== 3) {
+    } else if (formStep !== 4) {
       return (
         <button
           type="button"
@@ -49,12 +51,15 @@ const UserForm = (params) => {
   };
 
   const formSubmit = (val) => {
-    console.log("Yes");
+    const { password, confirmPassword } = val;
     console.log(val);
-    setUserReq(val);
-    params.setShowPricing(true);
-
+    console.log(password, confirmPassword);
+    if (password !== confirmPassword) {
+      navigate("/registerProvider");
+      return;
+    }
     completeFormStep();
+    // registerProvider(val);
   };
 
   const prevStep = () => {
@@ -76,7 +81,7 @@ const UserForm = (params) => {
           Welcome to <span className="text-yellow-500">the Club</span>
         </h1>
         <p className="text-green-200 mt-2">
-          Avail Any Cloud Service in 4 easy steps
+          Avail Any Cloud Service in 5 easy steps
         </p>
       </div>
       <div className="max-w-xl w-full mt-24 mb-24 rounded-lg shadow-2xl bg-white mx-auto overflow-hidden z-10">
@@ -114,26 +119,129 @@ const UserForm = (params) => {
             {formStep >= 0 && (
               <section className={`${formStep === 0 ? "block" : "hidden"}`}>
                 <h2 className="font-semibold text-3xl mb-8">
-                  Service Requirments
+                  Basic Requirments
                 </h2>
-                <label htmlFor="csp">Preffered Cloud Provider</label>
-                <select
-                  id="csp"
-                  name="csp"
-                  className="mt-3 mb-4 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-                  {...register("csp", {
+                <label htmlFor="email">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  className="mt-3 mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+                  {...register("email", {
                     required: {
                       value: true,
-                      message: "please enter the name of provider",
+                      message: "please enter Email",
                     },
                   })}
-                >
-                  <option value="AWS">AWS</option>
-                  <option value="Azure">Azure</option>
-                  <option value="IBM">IBM</option>
-                  <option value="Google Cloud">Google-Cloud</option>
-                  <option value="other">Other</option>
-                </select>
+                />
+                {errors.email && (
+                  <p className=" mb-4 text-red-600 text-sm ">
+                    {errors.email.message}
+                  </p>
+                )}
+
+                <label htmlFor="password">Password</label>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  className="mt-3 mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+                  {...register("password", {
+                    required: {
+                      value: true,
+                      message: "please enter Password",
+                    },
+                  })}
+                />
+                {errors.password && (
+                  <p className=" mb-4 text-red-600 text-sm ">
+                    {errors.password.message}
+                  </p>
+                )}
+
+                <label htmlFor="confirmPassword">Confirm Password</label>
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  className="mt-3 mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+                  {...register("confirmPassword", {
+                    required: {
+                      value: true,
+                      message: "please confirm your Password",
+                    },
+                  })}
+                />
+                {errors.confirmPassword && (
+                  <p className=" mb-4 text-red-600 text-sm ">
+                    {errors.confirmPassword.message}
+                  </p>
+                )}
+              </section>
+            )}
+            {formStep >= 1 && (
+              <section className={`${formStep === 1 ? "block" : "hidden"}`}>
+                <h2 className="font-semibold text-3xl mb-8">
+                  Service Requirments
+                </h2>
+                <label htmlFor="name">Brand Name</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  className="mt-3 mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+                  {...register("name", {
+                    required: {
+                      value: true,
+                      message: "please enter name",
+                    },
+                  })}
+                />
+                {errors.name && (
+                  <p className=" mb-4 text-red-600 text-sm ">
+                    {errors.name.message}
+                  </p>
+                )}
+
+                <label htmlFor="bandwidth">Bandwidth</label>
+                <input
+                  type="number"
+                  id="bandwidth"
+                  placeholder="in mbps"
+                  name="bandwidth"
+                  className="mt-3 mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+                  {...register("bandwidth", {
+                    required: {
+                      value: true,
+                      message: "please enter bandwidth",
+                    },
+                  })}
+                />
+                {errors.bandwidth && (
+                  <p className=" mb-4 text-red-600 text-sm ">
+                    {errors.bandwidth.message}
+                  </p>
+                )}
+
+                <label htmlFor="responseTime">Response Time</label>
+                <input
+                  type="number"
+                  id="responseTime"
+                  placeholder="in ms"
+                  name="responseTime"
+                  className="mt-3 mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+                  {...register("responseTime", {
+                    required: {
+                      value: true,
+                      message: "please enter Response time",
+                    },
+                  })}
+                />
+                {errors.responseTime && (
+                  <p className=" mb-2 text-red-600 text-sm ">
+                    {errors.responseTime.message}
+                  </p>
+                )}
 
                 <label htmlFor="tos">Type of service</label>
                 <select
@@ -153,53 +261,6 @@ const UserForm = (params) => {
                   <option value="Networking">Networking</option>
                   <option value="other">Other</option>
                 </select>
-
-                <label htmlFor="cpu">CPU cores</label>
-                <input
-                  type="number"
-                  id="cpu"
-                  name="cpu"
-                  className="mt-3 mb-4 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-                  {...register("cpu", {
-                    required: {
-                      value: true,
-                      message: "please enter number of cors",
-                    },
-                    min: {
-                      value: 0,
-                      message: "number of cors cannot be negative",
-                    },
-                  })}
-                />
-                {errors.cpu && (
-                  <p className=" mb-3 text-red-600 text-sm ">
-                    {errors.cpu.message}
-                  </p>
-                )}
-
-                <label htmlFor="ram">RAM</label>
-                <input
-                  type="number"
-                  id="ram"
-                  placeholder="in GB"
-                  name="ram"
-                  className="mt-3 mb-4 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-                  {...register("ram", {
-                    required: {
-                      value: true,
-                      message: "please enter RAM",
-                    },
-                    min: {
-                      value: 0,
-                      message: "RAM cannot be negative",
-                    },
-                  })}
-                />
-                {errors.ram && (
-                  <p className=" text-red-600 text-sm mb-3">
-                    {errors.ram.message}
-                  </p>
-                )}
 
                 <label htmlFor="storage">Storage</label>
                 <input
@@ -227,8 +288,8 @@ const UserForm = (params) => {
               </section>
             )}
 
-            {formStep >= 1 && (
-              <section className={`${formStep === 1 ? "block" : "hidden"}`}>
+            {formStep >= 2 && (
+              <section className={`${formStep === 2 ? "block" : "hidden"}`}>
                 <h2 className="font-semibold text-3xl mb-8">
                   Budget And Cost Prefference
                 </h2>
@@ -256,6 +317,22 @@ const UserForm = (params) => {
                   </p>
                 )}
 
+                <label htmlFor="virtual_machine">
+                  Avalaible Virtual Machine
+                </label>
+                <input
+                  type="number"
+                  id="virtual_machine"
+                  name="virtual_machine"
+                  className=" mt-3 mb-4 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+                  {...register("virtual_machine", {})}
+                />
+                {errors.virtual_machine && (
+                  <p className="text-red-600 text-sm mb-3">
+                    {errors.virtual_machine.message}
+                  </p>
+                )}
+
                 <label htmlFor="price-model">Pricing Model</label>
                 <select
                   id="price-model"
@@ -276,98 +353,169 @@ const UserForm = (params) => {
               </section>
             )}
 
-            {formStep >= 2 && (
-              <section className={`${formStep === 2 ? "block" : "hidden"}`}>
-                <h2 className="font-semibold text-3xl mb-8">
-                  Technical Specifications
-                </h2>
-                <label htmlFor="dc_location">
-                  Preffered Data Center Location
-                </label>
-                <input
-                  type="text"
-                  id="dc_location"
-                  name="dc_location"
-                  className=" mt-3 mb-4 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-                  {...register("dc_location", {
-                    required: {
-                      value: true,
-                      message: "please enter reigon",
-                    },
-                  })}
-                />
-                {errors.dc_location && (
-                  <p className="text-red-600 text-sm  mb-3">
-                    {errors.dc_location.message}
-                  </p>
-                )}
-
-                <label htmlFor="os">Operating System Prefference</label>
-                <select
-                  id="os"
-                  name="pos"
-                  className="mt-3 mb-4 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-                  {...register("os", {
-                    required: {
-                      value: true,
-                      message: "please enter your name",
-                    },
-                  })}
-                >
-                  <option value="windows">Windows</option>
-                  <option value="linux">Linux</option>
-                  <option value="mac-os">Mac-os</option>
-                  <option value="other">Other</option>
-                </select>
-
-                <label htmlFor="api_comp">API Compatibility</label>
-                <input
-                  type="text"
-                  id="api_comp"
-                  name="api_comp"
-                  className=" mt-3 mb-4 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-                  {...register("api_comp")}
-                />
-              </section>
-            )}
-
             {formStep >= 3 && (
               <section className={`${formStep === 3 ? "block" : "hidden"}`}>
                 <h2 className="font-semibold text-3xl mb-8">
+                  Technical Specifications
+                </h2>
+
+                <label htmlFor="cpucapacity">CPU Capacity</label>
+                <select
+                  id="cpucapacity"
+                  name="cpucapacity"
+                  className="mt-3 mb-4 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+                  {...register("cpucapacity", {
+                    required: {
+                      value: true,
+                      message: "please enter price",
+                    },
+                  })}
+                >
+                  <option value="Veryhigh">Very High</option>
+                  <option value="high">High</option>
+                  <option value="meadium">Meadium</option>
+                  <option value="low">Low</option>
+                  <option value="verylow">Very Low</option>
+                </select>
+
+                <label htmlFor="memorysize">Memory Size</label>
+                <select
+                  id="memorysize"
+                  name="memorysize"
+                  className="mt-3 mb-4 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+                  {...register("memorysize", {
+                    required: {
+                      value: true,
+                      message: "please enter price",
+                    },
+                  })}
+                >
+                  <option value="Veryhigh">Very High</option>
+                  <option value="high">High</option>
+                  <option value="meadium">Meadium</option>
+                  <option value="low">Low</option>
+                  <option value="verylow">Very Low</option>
+                </select>
+
+                <label htmlFor="boottime">Boot Time</label>
+                <select
+                  id="boottime"
+                  name="boottime"
+                  className="mt-3 mb-4 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+                  {...register("boottime", {
+                    required: {
+                      value: true,
+                      message: "please enter price",
+                    },
+                  })}
+                >
+                  <option value="Veryhigh">Very High</option>
+                  <option value="high">High</option>
+                  <option value="meadium">Meadium</option>
+                  <option value="low">Low</option>
+                  <option value="verylow">Very Low</option>
+                </select>
+
+                <label htmlFor="flexibility">Flexibility</label>
+                <select
+                  id="flexibility"
+                  name="flexibility"
+                  className="mt-3 mb-4 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+                  {...register("flexibility", {
+                    required: {
+                      value: true,
+                      message: "please enter price",
+                    },
+                  })}
+                >
+                  <option value="none">None</option>
+                  <option value="yes">Yes</option>
+                </select>
+              </section>
+            )}
+
+            {formStep >= 4 && (
+              <section className={`${formStep === 4 ? "block" : "hidden"}`}>
+                <h2 className="font-semibold text-3xl mb-8">
                   Security And Compliance Need
                 </h2>
-                <div className="flex items-center mt-3 mb-4 ml-3">
-                  <input
-                    id="data-checkbox"
-                    type="checkbox"
-                    name="data_encrypt"
-                    value="yes"
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                    {...register("data_encrypt")}
-                  />
-                  <label
-                    htmlFor="data-checkbox"
-                    className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-500"
-                  >
-                    Data Encrption
-                  </label>
-                </div>
-                <div className="flex items-center ml-3">
-                  <input
-                    id="transport-checkbox"
-                    type="checkbox"
-                    name="transport_encrypt"
-                    value="yes"
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                    {...register("transport_encrypt")}
-                  />
-                  <label
-                    htmlFor="transport-checkbox"
-                    className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-500"
-                  >
-                    Transport Encrption
-                  </label>
-                </div>
+
+                <label htmlFor="scaleup">Scale Up</label>
+                <select
+                  id="scaleup"
+                  name="scaleup"
+                  className="mt-3 mb-4 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+                  {...register("scaleup", {
+                    required: {
+                      value: true,
+                      message: "please enter price",
+                    },
+                  })}
+                >
+                  <option value="Veryhigh">Very High</option>
+                  <option value="high">High</option>
+                  <option value="meadium">Meadium</option>
+                  <option value="low">Low</option>
+                  <option value="verylow">Very Low</option>
+                </select>
+
+                <label htmlFor="scaledown">Scale Down</label>
+                <select
+                  id="scaledown"
+                  name="scaledown"
+                  className="mt-3 mb-4 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+                  {...register("scaledown", {
+                    required: {
+                      value: true,
+                      message: "please enter price",
+                    },
+                  })}
+                >
+                  <option value="Veryhigh">Very High</option>
+                  <option value="high">High</option>
+                  <option value="meadium">Meadium</option>
+                  <option value="low">Low</option>
+                  <option value="verylow">Very Low</option>
+                </select>
+
+                <label htmlFor="scaleuptime">Scale up Time</label>
+                <select
+                  id="scaleuptime"
+                  name="scaleuptime"
+                  className="mt-3 mb-4 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+                  {...register("scaleuptime", {
+                    required: {
+                      value: true,
+                      message: "please enter price",
+                    },
+                  })}
+                >
+                  <option value="Veryhigh">Very High</option>
+                  <option value="high">High</option>
+                  <option value="meadium">Meadium</option>
+                  <option value="low">Low</option>
+                  <option value="verylow">Very Low</option>
+                </select>
+
+                <label htmlFor="scaledowntime">Scale Down Time</label>
+                <select
+                  id="scaledowntime"
+                  name="scaledowntime"
+                  className="mt-3 mb-4 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+                  {...register("scaledowntime", {
+                    required: {
+                      value: true,
+                      message: "please enter price",
+                    },
+                  })}
+                >
+                  <option value="Veryhigh">Very High</option>
+                  <option value="high">High</option>
+                  <option value="meadium">Meadium</option>
+                  <option value="low">Low</option>
+                  <option value="verylow">Very Low</option>
+                </select>
+
                 <button
                   disabled={!isValid}
                   type="submit"
@@ -378,8 +526,8 @@ const UserForm = (params) => {
               </section>
             )}
 
-            {formStep >= 4 && (
-              <section className={`${formStep === 4 ? "block" : "hidden"}`}>
+            {formStep >= 5 && (
+              <section className={`${formStep === 5 ? "block" : "hidden"}`}>
                 <h2 className="font-semibold text-3xl mb-6 ml-12">
                   Information Saved
                 </h2>

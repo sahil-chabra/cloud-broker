@@ -12,12 +12,14 @@ import { heroOne, heroTwo, heroThree } from "../data/HeroData";
 const Home = () => {
   return (
     <>
+      <Navbar />
       <Hero />
       <Features />
       <Content {...heroOne} />
       <Content {...heroTwo} />
       <Content {...heroThree} />
       <Carousel />
+      <Footer />
     </>
   );
 };

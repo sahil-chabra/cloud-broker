@@ -5,11 +5,11 @@ export const data = [
     id: "about",
   },
   {
-    to: "/signup",
+    to: "/signinProvider",
     text: "Become a cloud Provider",
   },
   {
     to: "/signup",
-    text: "Contact",
+    text: "Become our client",
   },
 ];

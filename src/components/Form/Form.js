@@ -16,15 +16,15 @@ import {
 import { Container } from "../../globalStyles";
 import validateForm from "./validateForm";
 import { useAppContext } from "../../context/appContext";
+import { useNavigate } from "react-router-dom";
 
-const Form = () => {
+const Form = (params) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPass, setConfirmPass] = useState("");
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
-  const [isMember, setIsMember] = useState(false);
+  const [isMember, setIsMember] = useState(true);
+  const navigate = useNavigate();
 
   const {
     user,
@@ -35,7 +35,16 @@ const Form = () => {
     alertText,
     alertType,
     showAlert,
+    logInProvider,
   } = useAppContext();
+
+  useEffect(() => {
+    // console.log(params);
+    // console.log(isMember + " " + params);
+    if (!isMember && params.userType === "provider") {
+      navigate("/registerProvider");
+    }
+  }, [isMember, params]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -64,16 +73,20 @@ const Form = () => {
         password,
       };
 
-      logInUser(currentUser);
+      if (params.userType !== "provider") logInUser(currentUser);
+      else logInProvider(currentUser);
     } else {
-      const currentUser = {
-        name,
-        email,
-        password,
-        confirmPass,
-      };
+      if (params.userType !== "provider") {
+        const currentUser = {
+          name,
+          email,
+          password,
+          confirmPass,
+        };
 
-      registerUser(currentUser);
+        registerUser(currentUser);
+      } else {
+      }
     }
     setName("");
     setEmail("");
@@ -146,7 +159,11 @@ const Form = () => {
                 </FormInputRow>
               )}
 
-              <FormButton type="submit">Signup</FormButton>
+              <FormButton type="submit" disabled={isLoading}>{`${
+                isMember
+                  ? "Log in"
+                  : `${params.userType === "provider" ? "Next" : "Sign Up"}`
+              }`}</FormButton>
               <FormMemberLink>
                 {isMember ? "Not a member?" : "Already a member?"}
                 <FormMemberButtom
