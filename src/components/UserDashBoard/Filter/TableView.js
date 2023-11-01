@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import styled from "styled-components";
+import classes from "./TableStyles.module.css";
 import {
   useTable,
   useFilters,
@@ -252,11 +252,11 @@ function Table({ columns, data }) {
   const firstPageRows = rows.slice(0, 25);
 
   return (
-    <div className="tableContainer">
-      <table claasName="table" {...getTableProps()}>
-        <thead className="tableHead">
+    <div className={classes.tableContainer}>
+      <table className={classes.table} {...getTableProps()}>
+        <thead>
           {headerGroups.map((headerGroup) => (
-            <tr className="headRow" {...headerGroup.getHeaderGroupProps()}>
+            <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
                 <th className="" {...column.getHeaderProps()}>
                   {column.render("Header")}
@@ -267,12 +267,7 @@ function Table({ columns, data }) {
             </tr>
           ))}
           <tr>
-            <th
-              colSpan={visibleColumns.length}
-              style={{
-                textAlign: "left",
-              }}
-            >
+            <th colSpan={visibleColumns.length}>
               <GlobalFilter
                 preGlobalFilteredRows={preGlobalFilteredRows}
                 globalFilter={state.globalFilter}
@@ -285,19 +280,10 @@ function Table({ columns, data }) {
           {firstPageRows.map((row, i) => {
             prepareRow(row);
             return (
-              <tr
-                className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                {...row.getRowProps()}
-              >
+              <tr {...row.getRowProps()}>
                 {row.cells.map((cell) => {
                   return (
-                    <td
-                      style={{ border: "none" }}
-                      className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                      {...cell.getCellProps()}
-                    >
-                      {cell.render("Cell")}
-                    </td>
+                    <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
                   );
                 })}
               </tr>
