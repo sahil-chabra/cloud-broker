@@ -7,6 +7,9 @@ import {
   TOGGLE_SIDEBAR,
   LOGOUT_USER,
   SET_ALERT,
+  SETUP_PROVIDER_BEGIN,
+  SETUP_PROVIDER_SUCCESS,
+  SETUP_PROVIDER_ERROR
 } from "./actions";
 
 export const reducer = (state, action) => {
@@ -15,7 +18,14 @@ export const reducer = (state, action) => {
       ...state,
       isLoading: true,
     };
-  } else if (action.type === SET_USER_REQUIREMENT) {
+  } else  if (action.type === SETUP_PROVIDER_BEGIN) {
+    return {
+      ...state,
+      isLoading: true,
+    };
+  } 
+  
+  else if (action.type === SET_USER_REQUIREMENT) {
     return {
       ...state,
       userReq: action.payload.userReq,
@@ -47,7 +57,17 @@ export const reducer = (state, action) => {
       alertType: "success",
       alertText: action.payload.alertText,
     };
-  } else if (action.type === SETUP_USER_ERROR) {
+  } else if (action.type === SETUP_PROVIDER_SUCCESS) {
+    return {
+      ...state,
+      provider: action.payload.provider,
+      isLoading: false,
+      showAlert: true,
+      alertType: "success",
+      alertText: action.payload.alertText,
+    };
+  }  
+  else if (action.type === SETUP_USER_ERROR) {
     return {
       ...state,
       isLoading: false,
@@ -55,7 +75,17 @@ export const reducer = (state, action) => {
       alertType: false,
       alertText: action.message,
     };
-  } else if (action.type === HIDE_ALERT) {
+  } else if (action.type === SETUP_PROVIDER_ERROR) {
+    return {
+      ...state,
+      isLoading: false,
+      showAlert: true,
+      alertType: false,
+      alertText: action.message,
+    };
+  }
+  
+  else if (action.type === HIDE_ALERT) {
     return {
       ...state,
       showAlert: false,
