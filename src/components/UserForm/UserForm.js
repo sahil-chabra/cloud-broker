@@ -58,8 +58,9 @@ const UserForm = () => {
       navigate("/registerProvider");
       return;
     }
+    registerProvider(val);
     completeFormStep();
-    // registerProvider(val);
+ 
   };
 
   const prevStep = () => {
