@@ -133,6 +133,10 @@ export const AppProvider = ({ children }) => {
     });
   };
 
+  const registerProvider = () => {
+    
+  }
+
   return (
     <appContext.Provider
       value={{
