@@ -10,6 +10,9 @@ import {
   TOGGLE_SIDEBAR,
   LOGOUT_USER,
   SET_ALERT,
+  SETUP_PROVIDER_BEGIN,
+  SETUP_PROVIDER_SUCCESS,
+  SETUP_PROVIDER_ERROR,
 } from "./actions.js";
 
 const appContext = createContext();
@@ -109,6 +112,43 @@ export const AppProvider = ({ children }) => {
     hideAlert();
   };
 
+  const setUpProvider = async ({ currentProvider, endpoint, alertText }) => {
+    dispatch({
+      type: SETUP_PROVIDER_BEGIN,
+    });
+
+    try {
+      console.log(currentProvider);
+      const response = await axios.post(
+        `http://localhost:5000/api/v1/auth/${endpoint}`,
+        currentProvider
+      );
+
+      console.log(response);
+      if (!response || response.name === "AxiosError") {
+        throw new Error(response.message);
+      }
+      const { provider } = await response.data.data;
+      // console.log(user);
+      dispatch({
+        type: SETUP_USER_SUCCESS,
+        payload: {
+          provider,
+          alertText,
+        },
+      });
+      localStorage.setItem("providerStr", JSON.stringify(provider));
+    } catch (error) {
+      console.log(error);
+      dispatch({
+        type: SETUP_PROVIDER_ERROR,
+        message: error.message,
+      });
+    }
+
+    hideAlert();
+  };
+
   const registerUser = (currentUser) => {
     setUpUser({
       currentUser,
@@ -133,9 +173,21 @@ export const AppProvider = ({ children }) => {
     });
   };
 
-  const registerProvider = () => {
-    
-  }
+  const registerProvider = (currentProvider) => {
+    setUpProvider({
+      currentProvider,
+      endpoint: "registerProvider",
+      alertText: "Registeration Complete! redirecting...",
+    });
+  };
+
+  const loginProvider = (currentProvider) => {
+    setUpProvider({
+      currentProvider,
+      endpoint: "loginProvider",
+      alertText: "Logged in successfully! redirecting...",
+    });
+  };
 
   return (
     <appContext.Provider
@@ -147,6 +199,8 @@ export const AppProvider = ({ children }) => {
         setUserReq,
         toggleSideBar,
         logoutUser,
+        registerProvider,
+        loginProvider,
       }}
     >
       {children}

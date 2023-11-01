@@ -1,9 +1,14 @@
 .tableContainer {
   overflow: scroll;
   background-color: #101522;
-
-  border-radius: 10px;
-  .table {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  .tableH {
+    margin: calc(1rem + 1vw);
+    border-radius: 1rem;
+    border: 1px solid #504f4f;
   }
 }
 
@@ -15,7 +20,7 @@
 }
 
 .table thead tr {
-  border: 1px solid #504f4f;
+  border-bottom: 1px solid #504f4f;
 }
 
 .table tbody tr td {
@@ -27,11 +32,16 @@
   font-size: 1rem;
   font-weight: 500;
   letter-spacing: 0.1em;
+  transition: 0.2s;
 }
 .table tbody tr:hover {
   background-color: #80848e;
   cursor: pointer;
   color: #101522;
+  z-index: 1111;
+  font-weight: 700;
+  font-size: 1.2rem;
 }
-.tableContainer {
+.tableContainer::-webkit-scrollbar {
+  display: none;
 }

@@ -30,12 +30,13 @@ function GlobalFilter({
     <span>
       Search:{" "}
       <input
+        className="mt-3 mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
         value={value || ""}
         onChange={(e) => {
           setValue(e.target.value);
           onChange(e.target.value);
         }}
-        placeholder={`${count} records...`}
+        placeholder={"Type any requirement here..."}
         style={{
           fontSize: "1.1rem",
           border: "0",
@@ -57,7 +58,18 @@ function DefaultColumnFilter({
       onChange={(e) => {
         setFilter(e.target.value || undefined); // Set undefined to remove the filter entirely
       }}
-      placeholder={`Search ${count} records...`}
+      placeholder={`Search by name here`}
+      style={{
+        padding: ".2rem .4rem",
+
+        border: "0px",
+        borderRadius: "4px",
+        color: "#3c3c3c",
+        textDecoration: "none",
+        outline: "none",
+        textAlign: "center",
+        marginRight: ".4rem",
+      }}
     />
   );
 }
@@ -84,11 +96,29 @@ function SelectColumnFilter({
       onChange={(e) => {
         setFilter(e.target.value || undefined);
       }}
+      style={{
+        padding: ".2rem .4rem",
+        width: "7.5rem",
+        border: "0px",
+        borderRadius: "4px",
+        color: "#3c3c3c",
+        textDecoration: "none",
+        outline: "none",
+        textAlign: "center",
+        marginRight: ".4rem",
+      }}
     >
       <option value="">All</option>
       {options.map((option, i) => (
-        <option key={i} value={option}>
-          {option}
+        <option
+          key={i}
+          value={option}
+          style={{
+            fontSize: "1.2rem",
+            fontWeight: "500",
+          }}
+        >
+          <div>{option}</div>
         </option>
       ))}
     </select>
@@ -124,8 +154,13 @@ function SliderColumnFilter({
         onChange={(e) => {
           setFilter(parseInt(e.target.value, 10));
         }}
+        style={{
+          height: "8px",
+          background: "radial-gradient(circle at center, #fff, #fafafa)",
+          borderRadius: "4px",
+        }}
       />
-      <button onClick={() => setFilter(undefined)}>Off</button>
+      <button onClick={() => setFilter(0)}>Off</button>
     </>
   );
 }
@@ -150,6 +185,9 @@ function NumberRangeColumnFilter({
     <div
       style={{
         display: "flex",
+        padding: "10px",
+        justifyContent: "center",
+        alignItems: "center",
       }}
     >
       <input
@@ -162,13 +200,20 @@ function NumberRangeColumnFilter({
             old[1],
           ]);
         }}
-        placeholder={`Min (${min})`}
+        placeholder={`Min`}
         style={{
-          width: "70px",
-          marginRight: "0.5rem",
+          padding: ".2rem .4rem",
+          width: "7.5rem",
+          border: "0px",
+          borderRadius: "4px",
+          color: "#3c3c3c",
+          textDecoration: "none",
+          outline: "none",
+          textAlign: "center",
+          marginRight: ".4rem",
         }}
       />
-      to
+      To
       <input
         value={filterValue[1] || ""}
         type="number"
@@ -179,10 +224,17 @@ function NumberRangeColumnFilter({
             val ? parseInt(val, 10) : undefined,
           ]);
         }}
-        placeholder={`Max (${max})`}
+        placeholder={`Max`}
         style={{
-          width: "70px",
-          marginLeft: "0.5rem",
+          padding: ".2rem .4rem",
+          width: "7.5rem",
+          border: "0px",
+          borderRadius: "4px",
+          color: "#3c3c3c",
+          textDecoration: "none",
+          outline: "none",
+          textAlign: "center",
+          marginLeft: ".3rem",
         }}
       />
     </div>
@@ -253,53 +305,57 @@ function Table({ columns, data }) {
 
   return (
     <div className={classes.tableContainer}>
-      <table className={classes.table} {...getTableProps()}>
-        <thead>
-          {headerGroups.map((headerGroup) => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column) => (
-                <th className="" {...column.getHeaderProps()}>
-                  {column.render("Header")}
-                  {/* Render the columns filter UI */}
-                  <div>{column.canFilter ? column.render("Filter") : null}</div>
-                </th>
-              ))}
-            </tr>
-          ))}
-          <tr>
-            <th colSpan={visibleColumns.length}>
-              <GlobalFilter
-                preGlobalFilteredRows={preGlobalFilteredRows}
-                globalFilter={state.globalFilter}
-                setGlobalFilter={setGlobalFilter}
-              />
-            </th>
-          </tr>
-        </thead>
-        <tbody {...getTableBodyProps()}>
-          {firstPageRows.map((row, i) => {
-            prepareRow(row);
-            return (
-              <tr {...row.getRowProps()}>
-                {row.cells.map((cell) => {
-                  return (
-                    <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
-                  );
-                })}
+      <div className={classes.tableH}>
+        <table className={classes.table} {...getTableProps()}>
+          <thead>
+            {headerGroups.map((headerGroup) => (
+              <tr {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((column) => (
+                  <th className="" {...column.getHeaderProps()}>
+                    {column.render("Header")}
+                    {/* Render the columns filter UI */}
+                    <div style={{ marginTop: "1rem" }}>
+                      {column.canFilter ? column.render("Filter") : null}
+                    </div>
+                  </th>
+                ))}
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      <br />
-      <div>
-        Showing the first {rows.length} results of {rows.length} rows
-      </div>
-      {/*<div>
+            ))}
+            <tr>
+              <th colSpan={visibleColumns.length}>
+                <GlobalFilter
+                  preGlobalFilteredRows={preGlobalFilteredRows}
+                  globalFilter={state.globalFilter}
+                  setGlobalFilter={setGlobalFilter}
+                />
+              </th>
+            </tr>
+          </thead>
+          <tbody {...getTableBodyProps()}>
+            {firstPageRows.map((row, i) => {
+              prepareRow(row);
+              return (
+                <tr {...row.getRowProps()}>
+                  {row.cells.map((cell) => {
+                    return (
+                      <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+        <br />
+        <div>
+          Showing the first {rows.length} results of {rows.length} rows
+        </div>
+        {/*<div>
         <pre>
           <code>{JSON.stringify(state.filters, null, 2)}</code>
         </pre>
       </div> */}
+      </div>
     </div>
   );
 }

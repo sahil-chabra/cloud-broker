@@ -7,9 +7,9 @@ const SharedLayout = () => {
   return (
     <Wrapper>
       <main className="dashboard">
-        {/* <BigSideBar /> */}
+        <BigSideBar />
         <div>
-          {/* <NavBar /> */}
+          <NavBar />
           <div className="dashboard-page">
             <Outlet />
           </div>

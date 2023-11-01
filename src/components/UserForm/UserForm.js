@@ -1,12 +1,41 @@
-import React from "react";
+import React, { useReducer, useState } from "react";
 import { useAppContext } from "../../context/appContext";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 //import { useAppContext } from "../../context/appContext";
 const max_step = 5;
+const initialAuthState = {
+  email: "",
+  password: "",
+  confirmPass: "",
+};
+
+const authReducer = (state, action) => {
+  if (action.type === "setEmail") {
+    return {
+      ...state,
+      email: action.payload,
+    };
+  } else if (action.type === "setPassword") {
+    return {
+      ...state,
+      password: action.payload,
+    };
+  } else if (action.type === "setConfirmPassword") {
+    return {
+      ...state,
+      confirmPass: action.payload,
+    };
+  }
+
+  return state;
+};
 const UserForm = () => {
   const [formStep, setFormStep] = React.useState(0);
-  const { registerProvider } = useAppContext();
+  const { registerProvider, displayAlert } = useAppContext();
+  const [authState, authDispatch] = useReducer(authReducer, initialAuthState);
+  const [inputError, setInputError] = useState(null);
+
   const navigate = useNavigate();
 
   const {
@@ -17,7 +46,13 @@ const UserForm = () => {
   } = useForm({ mode: "all" });
   const completeFormStep = () => {
     // e.preventDefault();
-    console.log("called " + formStep);
+    // console.log("called " + formStep);
+    const shouldDisable =
+      formStep === 0 && authState.password !== authState.confirmPass;
+    if (shouldDisable) {
+      setInputError("Passwords do not match!");
+      return;
+    }
     setFormStep((prev) => {
       return prev + 1;
     });
@@ -51,16 +86,14 @@ const UserForm = () => {
   };
 
   const formSubmit = (val) => {
-    const { password, confirmPassword } = val;
-    console.log(val);
-    console.log(password, confirmPassword);
-    if (password !== confirmPassword) {
-      navigate("/registerProvider");
-      return;
-    }
-    registerProvider(val);
+    const provider = {
+      ...val,
+      ...authState,
+    };
+    console.log(provider);
+
+    // registerProvider(provider);
     completeFormStep();
- 
   };
 
   const prevStep = () => {
@@ -128,18 +161,13 @@ const UserForm = () => {
                   id="email"
                   name="email"
                   className="mt-3 mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-                  {...register("email", {
-                    required: {
-                      value: true,
-                      message: "please enter Email",
-                    },
-                  })}
+                  onChange={(e) => {
+                    authDispatch({
+                      type: "setEmail",
+                      payload: e.target.value,
+                    });
+                  }}
                 />
-                {errors.email && (
-                  <p className=" mb-4 text-red-600 text-sm ">
-                    {errors.email.message}
-                  </p>
-                )}
 
                 <label htmlFor="password">Password</label>
                 <input
@@ -147,36 +175,28 @@ const UserForm = () => {
                   id="password"
                   name="password"
                   className="mt-3 mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-                  {...register("password", {
-                    required: {
-                      value: true,
-                      message: "please enter Password",
-                    },
-                  })}
+                  onChange={(e) => {
+                    authDispatch({
+                      type: "setPassword",
+                      payload: e.target.value,
+                    });
+                  }}
                 />
-                {errors.password && (
-                  <p className=" mb-4 text-red-600 text-sm ">
-                    {errors.password.message}
-                  </p>
-                )}
-
-                <label htmlFor="confirmPassword">Confirm Password</label>
+                <label htmlFor="confirmPass">Confirm Password</label>
                 <input
                   type="password"
-                  id="confirmPassword"
-                  name="confirmPassword"
+                  id="confirmPass"
+                  name="confirmPass"
                   className="mt-3 mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-                  {...register("confirmPassword", {
-                    required: {
-                      value: true,
-                      message: "please confirm your Password",
-                    },
-                  })}
+                  onChange={(e) => {
+                    authDispatch({
+                      type: "setConfirmPassword",
+                      payload: e.target.value,
+                    });
+                  }}
                 />
-                {errors.confirmPassword && (
-                  <p className=" mb-4 text-red-600 text-sm ">
-                    {errors.confirmPassword.message}
-                  </p>
+                {inputError && (
+                  <p className=" mb-2 text-red-600 text-sm ">{inputError}</p>
                 )}
               </section>
             )}
@@ -204,23 +224,23 @@ const UserForm = () => {
                   </p>
                 )}
 
-                <label htmlFor="bandwidth">Bandwidth</label>
+                <label htmlFor="network_bandwidth">Bandwidth</label>
                 <input
                   type="number"
-                  id="bandwidth"
+                  id="network_bandwidth"
                   placeholder="in mbps"
-                  name="bandwidth"
+                  name="network_bandwidth"
                   className="mt-3 mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-                  {...register("bandwidth", {
+                  {...register("network_bandwidth", {
                     required: {
                       value: true,
-                      message: "please enter bandwidth",
+                      message: "please enter network_bandwidth",
                     },
                   })}
                 />
-                {errors.bandwidth && (
+                {errors.network_bandwidth && (
                   <p className=" mb-4 text-red-600 text-sm ">
-                    {errors.bandwidth.message}
+                    {errors.network_bandwidth.message}
                   </p>
                 )}
 
@@ -374,7 +394,7 @@ const UserForm = () => {
                 >
                   <option value="Veryhigh">Very High</option>
                   <option value="high">High</option>
-                  <option value="meadium">Meadium</option>
+                  <option value="meadium">Medium</option>
                   <option value="low">Low</option>
                   <option value="verylow">Very Low</option>
                 </select>
@@ -393,7 +413,7 @@ const UserForm = () => {
                 >
                   <option value="Veryhigh">Very High</option>
                   <option value="high">High</option>
-                  <option value="meadium">Meadium</option>
+                  <option value="meadium">Medium</option>
                   <option value="low">Low</option>
                   <option value="verylow">Very Low</option>
                 </select>
@@ -412,7 +432,7 @@ const UserForm = () => {
                 >
                   <option value="Veryhigh">Very High</option>
                   <option value="high">High</option>
-                  <option value="meadium">Meadium</option>
+                  <option value="meadium">Medium</option>
                   <option value="low">Low</option>
                   <option value="verylow">Very Low</option>
                 </select>
@@ -455,7 +475,7 @@ const UserForm = () => {
                 >
                   <option value="Veryhigh">Very High</option>
                   <option value="high">High</option>
-                  <option value="meadium">Meadium</option>
+                  <option value="meadium">Medium</option>
                   <option value="low">Low</option>
                   <option value="verylow">Very Low</option>
                 </select>
@@ -474,7 +494,7 @@ const UserForm = () => {
                 >
                   <option value="Veryhigh">Very High</option>
                   <option value="high">High</option>
-                  <option value="meadium">Meadium</option>
+                  <option value="meadium">Medium</option>
                   <option value="low">Low</option>
                   <option value="verylow">Very Low</option>
                 </select>
@@ -493,7 +513,7 @@ const UserForm = () => {
                 >
                   <option value="Veryhigh">Very High</option>
                   <option value="high">High</option>
-                  <option value="meadium">Meadium</option>
+                  <option value="meadium">Medium</option>
                   <option value="low">Low</option>
                   <option value="verylow">Very Low</option>
                 </select>
@@ -512,7 +532,7 @@ const UserForm = () => {
                 >
                   <option value="Veryhigh">Very High</option>
                   <option value="high">High</option>
-                  <option value="meadium">Meadium</option>
+                  <option value="meadium">Medium</option>
                   <option value="low">Low</option>
                   <option value="verylow">Very Low</option>
                 </select>
