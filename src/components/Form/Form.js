@@ -85,7 +85,6 @@ const Form = (params) => {
         };
 
         registerUser(currentUser);
-      } else {
       }
     }
     setName("");

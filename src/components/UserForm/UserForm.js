@@ -32,11 +32,9 @@ const authReducer = (state, action) => {
 };
 const UserForm = () => {
   const [formStep, setFormStep] = React.useState(0);
-  const { registerProvider, displayAlert } = useAppContext();
+  const { registerProvider, isLoading, alertText, showAlert } = useAppContext();
   const [authState, authDispatch] = useReducer(authReducer, initialAuthState);
   const [inputError, setInputError] = useState(null);
-
-  const navigate = useNavigate();
 
   const {
     watch,
@@ -92,8 +90,8 @@ const UserForm = () => {
     };
     console.log(provider);
 
-    // registerProvider(provider);
-    completeFormStep();
+    registerProvider(provider);
+    // completeFormStep();
   };
 
   const prevStep = () => {
@@ -205,16 +203,16 @@ const UserForm = () => {
                 <h2 className="font-semibold text-3xl mb-8">
                   Service Requirments
                 </h2>
-                <label htmlFor="name">Brand Name</label>
+                <label htmlFor="brandName">Brand Name</label>
                 <input
                   type="text"
-                  id="name"
-                  name="name"
+                  id="brandName"
+                  name="brandName"
                   className="mt-3 mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-                  {...register("name", {
+                  {...register("brandName", {
                     required: {
                       value: true,
-                      message: "please enter name",
+                      message: "Please enter name",
                     },
                   })}
                 />
@@ -244,23 +242,23 @@ const UserForm = () => {
                   </p>
                 )}
 
-                <label htmlFor="responseTime">Response Time</label>
+                <label htmlFor="response_time">Response Time</label>
                 <input
                   type="number"
-                  id="responseTime"
+                  id="response_time"
                   placeholder="in ms"
-                  name="responseTime"
+                  name="response_time"
                   className="mt-3 mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-                  {...register("responseTime", {
+                  {...register("response_time", {
                     required: {
                       value: true,
                       message: "please enter Response time",
                     },
                   })}
                 />
-                {errors.responseTime && (
+                {errors.response_time && (
                   <p className=" mb-2 text-red-600 text-sm ">
-                    {errors.responseTime.message}
+                    {errors.response_time.message}
                   </p>
                 )}
 
@@ -314,14 +312,14 @@ const UserForm = () => {
                 <h2 className="font-semibold text-3xl mb-8">
                   Budget And Cost Prefference
                 </h2>
-                <label htmlFor="budget">Budget Constraints</label>
+                <label htmlFor="cost">Budget Constraints</label>
                 <input
                   type="number"
-                  id="budget"
+                  id="cost"
                   placeholder="in Rupee"
-                  name="budget"
+                  name="cost"
                   className=" mt-3 mb-4 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-                  {...register("budget", {
+                  {...register("cost", {
                     required: {
                       value: true,
                       message: "please enter price",
@@ -332,25 +330,23 @@ const UserForm = () => {
                     },
                   })}
                 />
-                {errors.budget && (
+                {errors.cost && (
                   <p className="text-red-600 text-sm mb-3">
-                    {errors.budget.message}
+                    {errors.cost.message}
                   </p>
                 )}
 
-                <label htmlFor="virtual_machine">
-                  Avalaible Virtual Machine
-                </label>
+                <label htmlFor="available_VM">Avalaible Virtual Machine</label>
                 <input
                   type="number"
-                  id="virtual_machine"
-                  name="virtual_machine"
+                  id="available_VM"
+                  name="available_VM"
                   className=" mt-3 mb-4 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-                  {...register("virtual_machine", {})}
+                  {...register("available_VM", {})}
                 />
-                {errors.virtual_machine && (
+                {errors.available_VM && (
                   <p className="text-red-600 text-sm mb-3">
-                    {errors.virtual_machine.message}
+                    {errors.available_VM.message}
                   </p>
                 )}
 
@@ -394,7 +390,7 @@ const UserForm = () => {
                 >
                   <option value="Veryhigh">Very High</option>
                   <option value="high">High</option>
-                  <option value="meadium">Medium</option>
+                  <option value="medium">Medium</option>
                   <option value="low">Low</option>
                   <option value="verylow">Very Low</option>
                 </select>
@@ -413,7 +409,7 @@ const UserForm = () => {
                 >
                   <option value="Veryhigh">Very High</option>
                   <option value="high">High</option>
-                  <option value="meadium">Medium</option>
+                  <option value="medium">Medium</option>
                   <option value="low">Low</option>
                   <option value="verylow">Very Low</option>
                 </select>
@@ -432,7 +428,7 @@ const UserForm = () => {
                 >
                   <option value="Veryhigh">Very High</option>
                   <option value="high">High</option>
-                  <option value="meadium">Medium</option>
+                  <option value="medium">Medium</option>
                   <option value="low">Low</option>
                   <option value="verylow">Very Low</option>
                 </select>
@@ -461,89 +457,72 @@ const UserForm = () => {
                   Security And Compliance Need
                 </h2>
 
-                <label htmlFor="scaleup">Scale Up</label>
+                <label htmlFor="scale_up">Scale Up</label>
                 <select
-                  id="scaleup"
-                  name="scaleup"
+                  id="scale_up"
+                  name="scale_up"
                   className="mt-3 mb-4 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-                  {...register("scaleup", {
-                    required: {
-                      value: true,
-                      message: "please enter price",
-                    },
-                  })}
+                  {...register("scale_up")}
                 >
                   <option value="Veryhigh">Very High</option>
                   <option value="high">High</option>
-                  <option value="meadium">Medium</option>
+                  <option value="medium">Medium</option>
                   <option value="low">Low</option>
                   <option value="verylow">Very Low</option>
                 </select>
 
-                <label htmlFor="scaledown">Scale Down</label>
+                <label htmlFor="scale_down">Scale Down</label>
                 <select
-                  id="scaledown"
-                  name="scaledown"
+                  id="scale_down"
+                  name="scale_down"
                   className="mt-3 mb-4 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-                  {...register("scaledown", {
-                    required: {
-                      value: true,
-                      message: "please enter price",
-                    },
-                  })}
+                  {...register("scale_down")}
                 >
                   <option value="Veryhigh">Very High</option>
                   <option value="high">High</option>
-                  <option value="meadium">Medium</option>
+                  <option value="medium">Medium</option>
                   <option value="low">Low</option>
                   <option value="verylow">Very Low</option>
                 </select>
 
-                <label htmlFor="scaleuptime">Scale up Time</label>
+                <label htmlFor="scale_up_time">Scale up Time</label>
                 <select
-                  id="scaleuptime"
-                  name="scaleuptime"
+                  id="scale_up_time"
+                  name="scale_up_time"
                   className="mt-3 mb-4 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-                  {...register("scaleuptime", {
-                    required: {
-                      value: true,
-                      message: "please enter price",
-                    },
-                  })}
+                  {...register("scale_up_time")}
                 >
                   <option value="Veryhigh">Very High</option>
                   <option value="high">High</option>
-                  <option value="meadium">Medium</option>
+                  <option value="medium">Medium</option>
                   <option value="low">Low</option>
                   <option value="verylow">Very Low</option>
                 </select>
 
-                <label htmlFor="scaledowntime">Scale Down Time</label>
+                <label htmlFor="scale_down_time">Scale Down Time</label>
                 <select
-                  id="scaledowntime"
-                  name="scaledowntime"
+                  id="scale_down_time"
+                  name="scale_down_time"
                   className="mt-3 mb-4 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-                  {...register("scaledowntime", {
-                    required: {
-                      value: true,
-                      message: "please enter price",
-                    },
-                  })}
+                  {...register("scale_down_time")}
                 >
                   <option value="Veryhigh">Very High</option>
                   <option value="high">High</option>
-                  <option value="meadium">Medium</option>
+                  <option value="medium">Medium</option>
                   <option value="low">Low</option>
                   <option value="verylow">Very Low</option>
                 </select>
 
                 <button
-                  disabled={!isValid}
+                  disabled={!isValid || isLoading}
                   type="submit"
                   className="mt-6 bg-green-600 text-white rounded px-8 py-6 w-full disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
                   Create Account
                 </button>
+                {showAlert && (
+                  <p className="text-green-600 text-lg mb-3">{alertText}</p>
+                )}
               </section>
             )}
 
@@ -552,6 +531,10 @@ const UserForm = () => {
                 <h2 className="font-semibold text-3xl mb-6 ml-12">
                   Information Saved
                 </h2>
+
+                <p className="text-red-600 text-sm mb-3">
+                  {errors.cost.message}
+                </p>
               </section>
             )}
 

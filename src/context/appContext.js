@@ -23,29 +23,27 @@ const initialState = {
   showAlert: false,
   alertType: "",
   alertText: "",
-  userReq: null,
+  provider: null,
   showSideBar: true,
 };
 
 export const AppProvider = ({ children }) => {
-  const initUser = () => {
+  const init = () => {
     console.log("running");
     const user = localStorage.getItem("userStr");
-    const userReq = localStorage.getItem("userReqStr");
+    const provider = localStorage.getItem("providerStr");
 
     if (user) {
       const userObj = JSON.parse(user);
-      console.log(userObj);
       initialState.user = userObj;
     }
-    if (userReq) {
-      const userReqObj = JSON.parse(userReq);
-      initialState.userReq = userReqObj;
+    if (provider) {
+      const providerObj = JSON.parse(provider);
+      initialState.provider = providerObj;
     }
   };
-  initUser();
+  init();
   const [state, dispatch] = useReducer(reducer, initialState);
-  console.log("state :" + state);
 
   const displayAlert = ({ alertType, alertText }) => {
     dispatch({
@@ -131,7 +129,7 @@ export const AppProvider = ({ children }) => {
       const { provider } = await response.data.data;
       // console.log(user);
       dispatch({
-        type: SETUP_USER_SUCCESS,
+        type: SETUP_PROVIDER_SUCCESS,
         payload: {
           provider,
           alertText,
@@ -181,7 +179,7 @@ export const AppProvider = ({ children }) => {
     });
   };
 
-  const loginProvider = (currentProvider) => {
+  const logInProvider = (currentProvider) => {
     setUpProvider({
       currentProvider,
       endpoint: "loginProvider",
@@ -200,7 +198,7 @@ export const AppProvider = ({ children }) => {
         toggleSideBar,
         logoutUser,
         registerProvider,
-        loginProvider,
+        logInProvider,
       }}
     >
       {children}
